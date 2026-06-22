@@ -1,38 +1,30 @@
-NavAI — AI-Powered Accessible Voice Web Navigator
+NavAI : AI-Powered Accessible Voice Web Navigator
 
 "Speak to navigate. Any website. No setup required."
 
-NavAI is a Chrome browser extension that enables visually impaired users to navigate any website using natural voice commands. Speak your intent, and NavAI finds the right element, scrolls to it, highlights it, and reads back a confirmation — on any website, without requiring any changes to the site itself.
+NavAI is a Chrome browser extension that enables visually impaired users to navigate any website using natural voice commands. Speak your intent, and NavAI finds the right element, scrolls to it, highlights it, and reads back a confirmation on any website, without requiring any changes to the site itself.
 
-Built for Bharat Academix CodeQuest 2026 — Round 2 by Team Neutral Tech.
+PURPOSE:
+NavAI addresses a critical accessibility gap: while assistive technologies 
+like screen readers exist, they are complex to learn, struggle with modern 
+JavaScript-heavy web applications, and require significant setup. NavAI 
+provides an intuitive, voice-first alternative that works universally 
+on e-commerce sites, news portals, government services, educational platforms, 
+and any other web destination without any cooperation from the website owner.
 
-How It Works :
+FUNCTIONALITY:
+When a user speaks a command, NavAI's content script (injected into the active 
+page via Chrome's Manifest V3 extension API) captures the voice input using 
+the browser's native Web Speech API. It then builds a minified snapshot of 
+the page's interactive DOM elements anchors, buttons, inputs, headings, 
+and landmark regions assigning each a unique identifier. This snapshot is 
+sent to the FastAPI backend via the extension's background service worker 
+(which bypasses the host page's Content Security Policy, a common blocker 
+for content script network calls).
 
-User speaks command
-        ↓
-content.js captures voice (Web Speech API)
-builds lightweight DOM snapshot
-        ↓
-background.js proxies request to backend
-(bypasses host page Content Security Policy)
-        ↓
-FastAPI backend receives command + DOM snapshot
-        ↓
-LangChain + Gemini 2.5 Flash
-performs semantic intent-to-element matching
-        ↓
-        ┌──────────────────────┬─────────────────────────┐
-        │                      │                         │
-   Match found            No confident match            
-   (SCROLL_TO)            (CAPTURE_SCREEN)              
-        │                      │                         
-        │         background.js captures screenshot      
-        │                      ↓                         
-        │         Gemini 2.5 Flash (vision mode)         
-        │         returns pixel coordinates              
-        │                      │                         
-        └──────────┬───────────┘                         
-                   ↓
-    Scroll + highlight target element
-    Speak confirmation via TTS
-    Save to chrome.storage (popup history)
+The backend passes the user's command and DOM snapshot to a LangChain chain 
+powered by Gemini 2.5 Flash, which performs semantic intent-to-element 
+matching. If matched with high confidence, it returns the element's ID and 
+a spoken confirmation. If not, it signals the frontend to capture a viewport 
+screenshot, which is then analyzed by Gemini 2.5 Flash's vision capabilities 
+to determine precise pixel coordinates of the target region.
