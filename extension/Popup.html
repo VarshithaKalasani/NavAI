@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>NavAI</title>
+<style>
+  :root {
+    --navai-primary: #4F46E5;
+    --navai-primary-dark: #3730A3;
+    --navai-bg: #0F172A;
+    --navai-surface: #1E293B;
+    --navai-text: #F1F5F9;
+    --navai-muted: #94A3B8;
+    --navai-success: #22C55E;
+    --navai-error: #EF4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    width: 300px;
+    margin: 0;
+    padding: 16px;
+    background: var(--navai-bg);
+    color: var(--navai-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .header .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--navai-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .header h1 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .header p {
+    margin: 0;
+    font-size: 11px;
+    color: var(--navai-muted);
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navai-surface);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.connected { background: var(--navai-success); }
+  .dot.disconnected { background: var(--navai-error); }
+  .dot.checking { background: var(--navai-muted); animation: pulse 1.2s infinite ease-in-out; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .status-text { flex: 1; }
+  .status-text .label { color: var(--navai-muted); font-size: 11px; }
+  .status-text .value { font-weight: 500; }
+  .last-command {
+    background: var(--navai-surface);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--navai-muted);
+    min-height: 20px;
+  }
+  .last-command .label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .last-command .value {
+    color: var(--navai-text);
+    font-style: italic;
+  }
+  button#mic-trigger {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--navai-primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  button#mic-trigger:hover { background: var(--navai-primary-dark); }
+  button#mic-trigger:disabled { opacity: 0.5; cursor: not-allowed; }
+  .hint {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--navai-muted);
+    text-align: center;
+  }
+  .hint kbd {
+    background: var(--navai-surface);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="icon">🎙</div>
+    <div>
+      <h1>NavAI</h1>
+      <p>Accessible Voice Web Navigator</p>
+    </div>
+  </div>
+
+  <div class="status-row">
+    <div class="dot checking" id="status-dot"></div>
+    <div class="status-text">
+      <div class="label">Backend</div>
+      <div class="value" id="status-value">Checking...</div>
+    </div>
+  </div>
+
+  <div class="last-command">
+    <span class="label">Last command</span>
+    <span class="value" id="last-command-value">None yet — try saying a command on any page.</span>
+  </div>
+
+  <button id="mic-trigger">🎙 Start Listening</button>
+
+  <p class="hint">Or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> on any page</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
